@@ -1,12 +1,13 @@
-from flask import Flask  # Replace with your framework/library if not using Flask
+# import flast module
+from flask import Flask
 
+# instance of flask application
 app = Flask(__name__)
 
-@app.route('/')
+# home route that returns below text when root url is accessed
+@app.route("/")
 def hello_world():
-    return 'Hello, World!'
+	return "<p>Hello, World!</p>"
 
-# Define other routes and application logic as needed
-
-# WSGI entry point
-application = app  # This is the WSGI callable that Gunicorn expects
+if __name__ == '__main__': 
+   app.run()
