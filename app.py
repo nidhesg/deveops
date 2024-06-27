@@ -1,5 +1,5 @@
-import http.server
-import socketserver
+from wsgiref.simple_server import make_server
+from wsgiref.util import setup_testing_defaults
 
 # Define the messages you want to print and serve
 messages = [
@@ -9,21 +9,24 @@ messages = [
     'Nidhesh'
 ]
 
-class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain; charset=utf-8')
-        self.end_headers()
+def simple_app(environ, start_response):
+    setup_testing_defaults(environ)
 
-        # Print each message and send it as the HTTP response
-        for message in messages:
-            print(message)
-            self.wfile.write(message.encode('utf-8') + b'\n')
+    # Set the response headers
+    status = '200 OK'
+    headers = [('Content-type', 'text/plain; charset=utf-8')]
+    start_response(status, headers)
+
+    response_body = '\n'.join(messages).encode('utf-8')
+    
+    # Print each message
+    for message in messages:
+        print(message)
+
+    return [response_body]
 
 if __name__ == '__main__':
     PORT = 8000
-    handler = MyHTTPRequestHandler
-
-    with socketserver.TCPServer(("", PORT), handler) as httpd:
-        print(f"Server started on port {PORT}")
-        httpd.serve_forever()
+    httpd = make_server('', PORT, simple_app)
+    print(f"Serving on port {PORT}...")
+    httpd.serve_forever()
