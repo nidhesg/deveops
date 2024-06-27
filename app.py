@@ -1,32 +1,12 @@
-from wsgiref.simple_server import make_server
-from wsgiref.util import setup_testing_defaults
+from flask import Flask  # Replace with your framework/library if not using Flask
 
-# Define the messages you want to print and serve
-messages = [
-    'hjlh',
-    'dhgkdjhg',
-    'hello world',
-    'Nidhesh'
-]
+app = Flask(__name__)
 
-def simple_app(environ, start_response):
-    setup_testing_defaults(environ)
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
-    # Set the response headers
-    status = '200 OK'
-    headers = [('Content-type', 'text/plain; charset=utf-8')]
-    start_response(status, headers)
+# Define other routes and application logic as needed
 
-    response_body = '\n'.join(messages).encode('utf-8')
-    
-    # Print each message
-    for message in messages:
-        print(message)
-
-    return [response_body]
-
-if __name__ == '__main__':
-    PORT = 8000
-    httpd = make_server('', PORT, simple_app)
-    print(f"Serving on port {PORT}...")
-    httpd.serve_forever()
+# WSGI entry point
+application = app  # This is the WSGI callable that Gunicorn expects
